@@ -1,0 +1,94 @@
+<!--
+Arquivo: botao_emergencia.html
+Descrição: página única com um botão vermelho grande (estilo "botão de emergência").
+-->
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Botão de Emergência - Piadola do Márcio</title>
+  <style>
+    html,body{height:100%;margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#111}
+    .wrap{height:100%;display:flex;align-items:center;justify-content:center}
+    .btn {
+      width:220px;
+      height:220px;
+      border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, #ff4b4b, #e60000);
+      box-shadow: 0 12px 30px rgba(230,0,0,0.5), inset 0 -6px 12px rgba(0,0,0,0.2);
+      border: 4px solid rgba(255,255,255,0.06);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
+      transition:transform 120ms ease, box-shadow 120ms ease;
+      font-weight:700; color:white; font-size:20px; text-transform:uppercase; letter-spacing:1px;
+    }
+    .btn:active{transform:translateY(6px) scale(0.98); box-shadow: 0 6px 18px rgba(0,0,0,0.6)}
+    .btn:focus{outline: none; box-shadow: 0 0 0 6px rgba(230,0,0,0.14)}
+    .btn .inner { text-align:center }
+    .label-big{font-size:26px;margin-top:6px}
+    .hint{position:fixed;left:12px;bottom:12px;color:#ddd;opacity:0.8;font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <button id="emBtn" class="btn" aria-label="Botão de emergência - Piadola do Márcio">
+      <div class="inner">
+        <div class="label-big">PIADOLA DO MÁRCIO</div>
+      </div>
+    </button>
+  </div>
+
+  <div class="hint">Pressione ENTER ou clique no botão para ouvir a risada.</div>
+
+  <audio id="sound" preload="auto">
+    <source src="https://raw.githubusercontent.com/BrunoMartins95/ProjetoBiBarcos/main/Carlos%20Alberto%20-%20Rindo%20-%20Meme%20Official%20%5Bil9CTqbvOcc%5D.mp3" type="audio/mpeg">
+    Seu navegador não suporta áudio embutido.
+  </audio>
+
+  <script>
+    (function(){
+      const btn = document.getElementById('emBtn');
+      const audio = document.getElementById('sound');
+
+      audio.load();
+
+      function playSound(){
+        try{audio.currentTime = 0;}catch(e){}
+        audio.play().catch(err=>{console.warn('Falha ao tentar reproduzir:', err);});
+      }
+
+      btn.addEventListener('click', ()=>{
+        playSound();
+        btn.animate([
+          { transform: 'scale(1)' },
+          { transform: 'scale(1.06)' },
+          { transform: 'scale(1)' }
+        ], { duration: 220, easing: 'ease-out' });
+      });
+
+      btn.setAttribute('tabindex', '0');
+      btn.addEventListener('keydown', (ev)=>{
+        if(ev.key === 'Enter' || ev.key === ' '){
+          ev.preventDefault();
+          btn.click();
+        }
+      });
+
+      btn.addEventListener('dragover', (e)=>{ e.preventDefault(); btn.style.opacity = 0.9; });
+      btn.addEventListener('dragleave', ()=>{ btn.style.opacity = 1; });
+      btn.addEventListener('drop', (e)=>{
+        e.preventDefault(); btn.style.opacity = 1;
+        const file = (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]);
+        if(file){
+          const url = URL.createObjectURL(file);
+          audio.src = url;
+          audio.load();
+          playSound();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
